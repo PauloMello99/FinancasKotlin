@@ -18,26 +18,19 @@ import kotlinx.android.synthetic.main.form_transacao.view.*
 import java.math.BigDecimal
 import java.util.*
 
-class AlteraTransacaoDialog(private val viewGroup: ViewGroup,
-                            private val context: Context) {
+open class FormTransacaoDialog(
+        private val context: Context,
+        private val viewGroup: ViewGroup?) {
 
     private val viewCriada = criaLayout()
     private val campoValor = viewCriada.form_transacao_valor
     private val campoCategoria = viewCriada.form_transacao_categoria
     private val campoData = viewCriada.form_transacao_data
 
-    fun chama(transacao: Transacao, transacaoDelegate: TransacaoDelegate) {
-        val tipo = transacao.tipo
-
+    fun chama(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
         configuraCampoCategoria(tipo)
         configuraFormulario(tipo, transacaoDelegate)
-
-        campoValor.setText(transacao.valor.toString())
-        campoData.setText(transacao.data.formataParaBrasileiro())
-        val categoriasRetornadas = context.resources.getStringArray(categoriasPor(tipo))
-        val posicaoCategoria = categoriasRetornadas.indexOf(transacao.categoria)
-        campoCategoria.setSelection(posicaoCategoria, true)
     }
 
     private fun configuraFormulario(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
@@ -47,7 +40,7 @@ class AlteraTransacaoDialog(private val viewGroup: ViewGroup,
         AlertDialog.Builder(context)
                 .setTitle(titulo)
                 .setView(viewCriada)
-                .setPositiveButton("Alterar"
+                .setPositiveButton("Adicionar"
                 ) { _, _ ->
                     val valorEmTexto = campoValor.text.toString()
                     val dataEmTexto = campoData.text.toString()
@@ -69,9 +62,9 @@ class AlteraTransacaoDialog(private val viewGroup: ViewGroup,
 
     private fun tituloPor(tipo: Tipo): Int {
         if (tipo == Tipo.RECEITA) {
-            return R.string.altera_receita
+            return R.string.adiciona_receita
         }
-        return R.string.altera_despesa
+        return R.string.adiciona_despesa
     }
 
     private fun converteCampoValor(valorEmTexto: String): BigDecimal {
@@ -90,9 +83,11 @@ class AlteraTransacaoDialog(private val viewGroup: ViewGroup,
 
         val categorias = categoriasPor(tipo)
 
-        val adapter = ArrayAdapter.createFromResource(context,
-                categorias,
-                android.R.layout.simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter
+                .createFromResource(context,
+                        categorias,
+                        android.R.layout.simple_spinner_dropdown_item)
+
         campoCategoria.adapter = adapter
     }
 
