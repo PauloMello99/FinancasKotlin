@@ -17,10 +17,13 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 class ListaTransacoesActivity : AppCompatActivity() {
 
     private val transacoes: MutableList<Transacao> = mutableListOf()
+    private var viewActivity: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_transacoes)
+
+        viewActivity = window.decorView
 
         configuraResumo()
         configuraLista()
@@ -39,7 +42,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
     }
 
     private fun chamaDialogDeAdicao(tipo: Tipo) {
-        AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
+        AdicionaTransacaoDialog(viewActivity as ViewGroup, this)
                 .chama(tipo, object : TransacaoDelegate {
                     override fun delegate(transacao: Transacao) {
                         transacoes.add(transacao)
@@ -55,8 +58,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
     }
 
     private fun configuraResumo() {
-        val view: View = window.decorView
-        val resumoView = ResumoView(this, view, transacoes)
+        val resumoView = ResumoView(this, viewActivity, transacoes)
         resumoView.atualiza()
     }
 
@@ -64,7 +66,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
         lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
         lista_transacoes_listview.setOnItemClickListener { _, _, posicao, _ ->
             val transacao = transacoes[posicao]
-            AlteraTransacaoDialog(window.decorView as ViewGroup, this)
+            AlteraTransacaoDialog(viewActivity as ViewGroup, this)
                     .chama(transacao, object : TransacaoDelegate {
                         override fun delegate(transacao: Transacao) {
                             transacoes[posicao] = transacao

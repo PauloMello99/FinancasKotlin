@@ -47,23 +47,23 @@ class AlteraTransacaoDialog(private val viewGroup: ViewGroup,
         AlertDialog.Builder(context)
                 .setTitle(titulo)
                 .setView(viewCriada)
-                .setPositiveButton("Alterar",
-                        { _, _ ->
-                            val valorEmTexto = campoValor.text.toString()
-                            val dataEmTexto = campoData.text.toString()
-                            val categoriaEmTexto = campoCategoria.selectedItem.toString()
+                .setPositiveButton("Alterar"
+                ) { _, _ ->
+                    val valorEmTexto = campoValor.text.toString()
+                    val dataEmTexto = campoData.text.toString()
+                    val categoriaEmTexto = campoCategoria.selectedItem.toString()
 
-                            val valor = converteCampoValor(valorEmTexto)
-                            val data = dataEmTexto.converteParaCalendar()
+                    val valor = converteCampoValor(valorEmTexto)
+                    val data = dataEmTexto.converteParaCalendar()
 
-                            val transacaoCriada = Transacao(tipo = tipo,
-                                    valor = valor,
-                                    data = data,
-                                    categoria = categoriaEmTexto)
+                    val transacaoCriada = Transacao(tipo = tipo,
+                        valor = valor,
+                        data = data,
+                        categoria = categoriaEmTexto)
 
-                            transacaoDelegate.delegate(transacaoCriada)
-                        })
-                .setNegativeButton("Cancelar", null)
+                    transacaoDelegate.delegate(transacaoCriada)
+                }
+            .setNegativeButton("Cancelar", null)
                 .show()
     }
 
