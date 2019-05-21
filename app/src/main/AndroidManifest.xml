@@ -11,7 +11,7 @@
                  tools:ignore="GoogleAppIndexingWarning"
                  android:fullBackupContent="true">
 
-        <activity android:name="br.com.alura.financask.ui.activity.ListaTransacoesActivity">
+        <activity android:name=".ui.activity.ListaTransacoesActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.MAIN"/>

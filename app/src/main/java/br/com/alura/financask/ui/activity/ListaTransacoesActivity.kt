@@ -2,9 +2,11 @@ package br.com.alura.financask.ui.activity
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.AdapterView
 import br.com.alura.financask.R
-import br.com.alura.financask.delegate.TransacaoDelegate
 import br.com.alura.financask.model.Tipo
 import br.com.alura.financask.model.Transacao
 import br.com.alura.financask.ui.ResumoView
@@ -42,13 +44,11 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     private fun chamaDialogDeAdicao(tipo: Tipo) {
         AdicionaTransacaoDialog(viewActivity as ViewGroup, this)
-                .chama(tipo, object : TransacaoDelegate {
-                    override fun delegate(transacao: Transacao) {
-                        transacoes.add(transacao)
-                        atualizaTransacoes()
-                        lista_transacoes_adiciona_menu.close(true)
-                    }
-                })
+            .chama(tipo) { transacao ->
+                transacoes.add(transacao)
+                atualizaTransacoes()
+                lista_transacoes_adiciona_menu.close(true)
+            }
     }
 
     private fun atualizaTransacoes() {
@@ -66,13 +66,28 @@ class ListaTransacoesActivity : AppCompatActivity() {
         lista_transacoes_listview.setOnItemClickListener { _, _, posicao, _ ->
             val transacao = transacoes[posicao]
             AlteraTransacaoDialog(viewActivity as ViewGroup, this)
-                    .chama(transacao, object : TransacaoDelegate {
-                        override fun delegate(transacao: Transacao) {
-                            transacoes[posicao] = transacao
-                            atualizaTransacoes()
-                        }
-                    })
+                    .chama(transacao) { transacaoCriada ->
+                        transacoes[posicao] = transacaoCriada
+                        atualizaTransacoes()
+                    }
         }
+        lista_transacoes_listview.setOnCreateContextMenuListener { menu, _, _ ->
+            menu.add(Menu.NONE,0,Menu.NONE,"Remover")
+        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == 0){
+            val adapterMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
+            val posicao = adapterMenuInfo.position
+            removeItem(posicao)
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    private fun removeItem(posicao: Int) {
+        transacoes.removeAt(posicao)
+        atualizaTransacoes()
     }
 
 }

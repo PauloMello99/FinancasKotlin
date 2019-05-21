@@ -1,30 +1,17 @@
 package br.com.alura.financask.ui.dialog
 
-import android.app.DatePickerDialog
 import android.content.Context
-import android.support.v7.app.AlertDialog
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Toast
-import br.com.alura.financask.R
-import br.com.alura.financask.delegate.TransacaoDelegate
-import br.com.alura.financask.extension.converteParaCalendar
 import br.com.alura.financask.extension.formataParaBrasileiro
-import br.com.alura.financask.model.Tipo
 import br.com.alura.financask.model.Transacao
-import kotlinx.android.synthetic.main.form_transacao.view.*
-import java.math.BigDecimal
-import java.util.*
 
 class AlteraTransacaoDialog(viewGroup: ViewGroup,
                             private val context: Context) : FormTransacaoDialog(context,viewGroup) {
 
-    fun chama(transacao: Transacao, transacaoDelegate: TransacaoDelegate) {
+    fun chama(transacao: Transacao, delegate : (transacao : Transacao) -> Unit ) {
         val tipo = transacao.tipo
 
-        super.chama(tipo,transacaoDelegate)
+        super.chama(tipo,delegate)
 
         campoValor.setText(transacao.valor.toString())
         campoData.setText(transacao.data.formataParaBrasileiro())
@@ -32,5 +19,4 @@ class AlteraTransacaoDialog(viewGroup: ViewGroup,
         val posicaoCategoria = categoriasRetornadas.indexOf(transacao.categoria)
         campoCategoria.setSelection(posicaoCategoria, true)
     }
-
 }

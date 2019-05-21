@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import br.com.alura.financask.R
-import br.com.alura.financask.delegate.TransacaoDelegate
 import br.com.alura.financask.extension.converteParaCalendar
 import br.com.alura.financask.extension.formataParaBrasileiro
 import br.com.alura.financask.model.Tipo
@@ -27,13 +26,13 @@ open class FormTransacaoDialog(
     protected val campoCategoria = viewCriada.form_transacao_categoria
     protected val campoData = viewCriada.form_transacao_data
 
-    fun chama(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
+    fun chama(tipo: Tipo, delegate: (transacao : Transacao) -> Unit) {
         configuraCampoData()
         configuraCampoCategoria(tipo)
-        configuraFormulario(tipo, transacaoDelegate)
+        configuraFormulario(tipo, delegate)
     }
 
-    private fun configuraFormulario(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
+    private fun configuraFormulario(tipo: Tipo,  delegate: (transacao : Transacao) -> Unit) {
 
         val titulo = tituloPor(tipo)
 
@@ -45,7 +44,6 @@ open class FormTransacaoDialog(
                     val valorEmTexto = campoValor.text.toString()
                     val dataEmTexto = campoData.text.toString()
                     val categoriaEmTexto = campoCategoria.selectedItem.toString()
-
                     val valor = converteCampoValor(valorEmTexto)
                     val data = dataEmTexto.converteParaCalendar()
 
@@ -54,7 +52,7 @@ open class FormTransacaoDialog(
                         data = data,
                         categoria = categoriaEmTexto)
 
-                    transacaoDelegate.delegate(transacaoCriada)
+                    delegate(transacaoCriada)
                 }
             .setNegativeButton("Cancelar", null)
                 .show()
@@ -91,7 +89,7 @@ open class FormTransacaoDialog(
         campoCategoria.adapter = adapter
     }
 
-    private fun categoriasPor(tipo: Tipo): Int {
+    protected fun categoriasPor(tipo: Tipo): Int {
         if (tipo == Tipo.RECEITA) {
             return R.array.categorias_de_receita
         }
