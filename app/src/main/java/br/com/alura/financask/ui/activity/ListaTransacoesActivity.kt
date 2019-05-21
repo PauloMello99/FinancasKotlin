@@ -7,8 +7,8 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.AdapterView
 import br.com.alura.financask.R
+import br.com.alura.financask.dao.TransacaoDAO
 import br.com.alura.financask.model.Tipo
-import br.com.alura.financask.model.Transacao
 import br.com.alura.financask.ui.ResumoView
 import br.com.alura.financask.ui.adapter.ListaTransacoesAdapter
 import br.com.alura.financask.ui.dialog.AdicionaTransacaoDialog
@@ -17,7 +17,8 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 
 class ListaTransacoesActivity : AppCompatActivity() {
 
-    private val transacoes: MutableList<Transacao> = mutableListOf()
+    private val dao = TransacaoDAO()
+    private val transacoes = dao.transacoes
     private val viewActivity by lazy {
         window.decorView
     }
@@ -45,7 +46,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
     private fun chamaDialogDeAdicao(tipo: Tipo) {
         AdicionaTransacaoDialog(viewActivity as ViewGroup, this)
             .chama(tipo) { transacao ->
-                transacoes.add(transacao)
+                dao.adiciona(transacao)
                 atualizaTransacoes()
                 lista_transacoes_adiciona_menu.close(true)
             }
@@ -67,7 +68,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
             val transacao = transacoes[posicao]
             AlteraTransacaoDialog(viewActivity as ViewGroup, this)
                     .chama(transacao) { transacaoCriada ->
-                        transacoes[posicao] = transacaoCriada
+                        dao.altera(transacaoCriada,posicao)
                         atualizaTransacoes()
                     }
         }
@@ -86,7 +87,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
     }
 
     private fun removeItem(posicao: Int) {
-        transacoes.removeAt(posicao)
+        dao.remove(posicao)
         atualizaTransacoes()
     }
 
